@@ -2,7 +2,7 @@ const main = document.querySelector(".main");
 const addNoteBtn = document.querySelector(".addNote");
 const addDrawingBtn = document.querySelector(".addDrawing");
 
-addNoteBtn.addEventListener("click", addNote);
+addNoteBtn.addEventListener("click", () => addNote());
 addDrawingBtn.addEventListener("click", addDrawing);
 
 const notes = JSON.parse(localStorage.getItem("notes"));
@@ -16,7 +16,6 @@ function addDrawing() {
 }
 
 function addNote(text = "") {
-  console.log("note");
   const note = document.createElement("div");
   note.className = "note";
 
@@ -37,6 +36,8 @@ function addNote(text = "") {
   textArea.value = text;
   body.innerHTML = text;
 
+  textArea.focus();
+
   deleteBtn.addEventListener("click", () => {
     note.remove();
 
@@ -46,10 +47,14 @@ function addNote(text = "") {
   editBtn.addEventListener("click", () => {
     body.classList.toggle("hidden");
     textArea.classList.toggle("hidden");
+    if (!textArea.classList.contains("hidden")) {
+      textArea.focus();
+    }
   });
 
   textArea.addEventListener("input", (e) => {
-    const { value } = e.target;
+    const value = e.target.value;
+    console.log(value);
 
     body.innerHTML = value;
 
