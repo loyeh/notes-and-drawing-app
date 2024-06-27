@@ -1,4 +1,5 @@
 const main = document.querySelector(".main");
+const container = document.querySelector(".container");
 const addNoteBtn = document.querySelector(".addNote");
 const addDrawingBtn = document.querySelector(".addDrawing");
 
@@ -13,6 +14,35 @@ if (notes) {
 
 function addDrawing() {
   console.log("drawing");
+}
+
+function addDrawing(image) {
+  const drawing = document.createElement("div");
+  drawing.className = "drawing";
+  drawing.innerHTML = `<div class="tools">
+            <div class="toolbox">
+              <div class="btn" id="decrease">-</div>
+              <span class="btn" id="size">10</span>
+              <div class="btn" id="increase">+</div>
+              <input class="btn" type="color" id="color" />
+              <div class="btn" id="clear">X</div>
+            </div>
+
+            <div class="delete btn"><i class="fas fa-trash-alt"></i></div>
+          </div>
+          <canvas class="canvas" width="200" height="170"></canvas>`;
+
+  const deleteBtn = drawing.querySelector(".delete");
+  const myCanvas = document.querySelector(".canvas");
+
+  console.log(myCanvas);
+  deleteBtn.addEventListener("click", () => {
+    drawing.remove();
+
+    updateLS();
+  });
+
+  container.appendChild(drawing);
 }
 
 function addNote(text = "") {
@@ -61,7 +91,7 @@ function addNote(text = "") {
     updateLS();
   });
 
-  main.appendChild(note);
+  container.appendChild(note);
 }
 
 function updateLS() {
