@@ -12,20 +12,16 @@ if (notes) {
   notes.forEach((note) => addNote(note));
 }
 
-function addDrawing() {
-  console.log("drawing");
-}
-
 function addDrawing(image) {
   const drawing = document.createElement("div");
   drawing.className = "drawing";
   drawing.innerHTML = `<div class="tools">
             <div class="toolbox">
-              <div class="btn" id="decrease">-</div>
-              <span class="btn" id="size">10</span>
-              <div class="btn" id="increase">+</div>
-              <input class="btn" type="color" id="color" />
-              <div class="btn" id="clear">X</div>
+              <div class="btn decrease">-</div>
+              <span class="btn size">10</span>
+              <div class="btn increase">+</div>
+              <input class="btn color" id="color" />
+              <div class="btn clear">X</div>
             </div>
 
             <div class="delete btn"><i class="fas fa-trash-alt"></i></div>
@@ -33,9 +29,95 @@ function addDrawing(image) {
           <canvas class="canvas" width="200" height="170"></canvas>`;
 
   const deleteBtn = drawing.querySelector(".delete");
-  const myCanvas = document.querySelector(".canvas");
+  const myCanvas = drawing.querySelector(".canvas");
+  const increaseBtn = drawing.querySelector(".increase");
+  const decreaseBtn = drawing.querySelector(".decrease");
+  const sizeEL = drawing.querySelector(".size");
+  const colorEl = drawing.querySelector("#color");
+  const clearEl = drawing.querySelector(".clear");
 
-  console.log(myCanvas);
+  const ctx = myCanvas.getContext("2d");
+
+  let size = 10;
+  let isPressed = false;
+  colorEl.value = "black";
+  let color = colorEl.value;
+  let x;
+  let y;
+
+  myCanvas.addEventListener("mousedown", (e) => {
+    isPressed = true;
+
+    x = e.offsetX;
+    y = e.offsetY;
+  });
+
+  document.addEventListener("mouseup", (e) => {
+    isPressed = false;
+
+    x = undefined;
+    y = undefined;
+  });
+
+  myCanvas.addEventListener("mousemove", (e) => {
+    if (isPressed) {
+      const x2 = e.offsetX;
+      const y2 = e.offsetY;
+
+      drawCircle(x2, y2);
+      drawLine(x, y, x2, y2);
+
+      x = x2;
+      y = y2;
+    }
+  });
+
+  function drawCircle(x, y) {
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  function drawLine(x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = size * 2;
+    ctx.stroke();
+  }
+
+  function updateSizeOnScreen() {
+    sizeEL.innerText = size;
+  }
+
+  increaseBtn.addEventListener("click", () => {
+    size += 5;
+
+    if (size > 50) {
+      size = 50;
+    }
+
+    updateSizeOnScreen();
+  });
+
+  decreaseBtn.addEventListener("click", () => {
+    size -= 5;
+
+    if (size < 5) {
+      size = 5;
+    }
+
+    updateSizeOnScreen();
+  });
+
+  colorEl.addEventListener("change", (e) => (color = e.target.value));
+
+  clearEl.addEventListener("click", () =>
+    ctx.clearRect(0, 0, myCanvas.width, myCanvas.height)
+  );
+
   deleteBtn.addEventListener("click", () => {
     drawing.remove();
 
