@@ -7,12 +7,17 @@ addNoteBtn.addEventListener("click", () => addNote());
 addDrawingBtn.addEventListener("click", addDrawing);
 
 const notes = JSON.parse(localStorage.getItem("notes"));
+const images = JSON.parse(localStorage.getItem("images"));
 
 if (notes) {
   notes.forEach((note) => addNote(note));
 }
 
-function addDrawing(image) {
+if (images) {
+  images.forEach((image) => addDrawing(image));
+}
+
+function addDrawing(imgURL) {
   const drawing = document.createElement("div");
   drawing.className = "drawing";
   drawing.innerHTML = `<div class="tools">
@@ -37,6 +42,10 @@ function addDrawing(image) {
   const clearEl = drawing.querySelector(".clear");
 
   const ctx = myCanvas.getContext("2d");
+  const img = new Image();
+  img.src = imgURL;
+
+  ctx.drawImage(img, 0, 0);
 
   let size = 10;
   let isPressed = false;
@@ -66,6 +75,7 @@ function addDrawing(image) {
 
       drawCircle(x2, y2);
       drawLine(x, y, x2, y2);
+      updateLS();
 
       x = x2;
       y = y2;
@@ -114,9 +124,10 @@ function addDrawing(image) {
 
   colorEl.addEventListener("change", (e) => (color = e.target.value));
 
-  clearEl.addEventListener("click", () =>
-    ctx.clearRect(0, 0, myCanvas.width, myCanvas.height)
-  );
+  clearEl.addEventListener("click", () => {
+    localStorage.setItem("myCanvas", null);
+    ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+  });
 
   deleteBtn.addEventListener("click", () => {
     drawing.remove();
@@ -125,6 +136,7 @@ function addDrawing(image) {
   });
 
   container.appendChild(drawing);
+  updateLS();
 }
 
 function addNote(text = "") {
@@ -178,10 +190,20 @@ function addNote(text = "") {
 
 function updateLS() {
   const notesText = document.querySelectorAll("textarea");
+  const canvasImages = document.querySelectorAll("canvas");
 
   const notes = [];
+  const images = [];
 
   notesText.forEach((note) => notes.push(note.value));
+  canvasImages.forEach((canvas) => {
+    images.push(canvas.toDataURL());
+  });
 
   localStorage.setItem("notes", JSON.stringify(notes));
+  localStorage.setItem("images", JSON.stringify(images));
+}
+
+function clearCanvas() {
+  localStorage.removeItem("myCanvas");
 }

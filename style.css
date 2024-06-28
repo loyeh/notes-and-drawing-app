@@ -16,6 +16,10 @@
   position: relative;
   top: 3em;
   left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  padding-left: 0.5em;
 }
 
 .btns {
@@ -53,8 +57,6 @@ button:active {
   width: 200px;
   height: 200px;
   background-color: wheat;
-  display: inline-block;
-  margin-left: 0.5em;
 }
 
 .tools,
